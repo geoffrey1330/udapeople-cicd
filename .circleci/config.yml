@@ -4,16 +4,6 @@ orbs:
 
 commands:
   
-  # install_awscli:
-  #   description: Install AWS CLI v2
-  #   steps:
-  #     - run:
-  #         name: Install AWS CLI v2
-  #         command: |
-  #           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #           unzip awscliv2.zip
-  #           sudo ./aws/install
-
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -211,7 +201,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - aws-cli/setup
+      # - aws-cli/setup
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -373,8 +363,8 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #     requires: [run-migrations]
       # - deploy-backend:
