@@ -195,7 +195,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible openssh-client tar gzip curl nodejs npm -y
+            apk add --update ansible openssh-client tar gzip curl nodejs npm
             pip install awscli
             cat .circleci/ansible/inventory.txt
       - run:
@@ -216,7 +216,7 @@ jobs:
             ansible-playbook \
               -i .circleci/ansible/inventory.txt \
               .circleci/ansible/configure-server.yml
-              
+
       - run:
           name: Install AWS cli for rollback
           when: on_fail
