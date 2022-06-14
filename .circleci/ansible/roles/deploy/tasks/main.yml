@@ -55,6 +55,12 @@
   args:
     chdir: /home/ubuntu/backend
 
+- name: "delete anything that might already be running"
+  become: true
+  ignore_errors: true
+  command: pm2 delete all
+
+
 - name: "Executing node"
   become: true
   command: pm2 start npm --name backend -- run start
