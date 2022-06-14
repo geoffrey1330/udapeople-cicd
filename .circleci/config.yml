@@ -242,13 +242,17 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - aws-cli/setup
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
             apk add --update ansible openssh-client tar gzip nodejs npm
-            pip install awscli
+            cd frontend
+            npm install
       - run:
           name: Get backend url
           command: |
