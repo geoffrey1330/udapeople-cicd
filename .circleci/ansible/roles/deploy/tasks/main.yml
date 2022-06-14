@@ -20,10 +20,10 @@
     path: /home/ubuntu/backend
     state: directory
 
-- name: Transfer backend files to cloud server
-  copy:
-    src: /root/project/backend
-    dest: /home/ubuntu
+# - name: Transfer backend files to cloud server
+#   copy:
+#     src: /root/project/backend
+#     dest: /home/ubuntu
 
 - name: "install pm2"
   become: yes
