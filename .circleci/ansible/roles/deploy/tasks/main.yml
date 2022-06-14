@@ -21,11 +21,13 @@
     state: directory
 
 - name: Transfer backend files to cloud server
-  command: ls 
   copy:
     src: /root/project/backend
     dest: /home/ubuntu
 
+- name: list path
+  command: ls
+  
 - name: make sure the latest npm is installed
   become: true
   command: npm install -g n
