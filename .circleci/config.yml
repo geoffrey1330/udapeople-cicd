@@ -224,6 +224,7 @@ jobs:
 
             cd backend
             ls -a
+            cat .env
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
