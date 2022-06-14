@@ -20,6 +20,9 @@
     path: /home/ubuntu/backend
     state: directory
 
+- name: check path
+  command: ls -a
+
 # - name: Transfer backend files to cloud server
 #   copy:
 #     src: /root/project/backend
