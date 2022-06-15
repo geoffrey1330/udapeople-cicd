@@ -15,13 +15,12 @@
     name: ["nodejs", "npm"]
     update_cache: "yes"
 
-- name: Creates directory
-  file:
-    path: /home/ubuntu/backend
-    state: directory
+# - name: Creates directory
+#   file:
+#     path: /home/ubuntu/backend
+#     state: directory
 
-- name: check path
-  command: ls -a
+
 
 # - name: Transfer backend files to cloud server
 #   copy:
@@ -30,8 +29,8 @@
 
 - name: "Unarchive backend files"
   unarchive:
-    src: artifact.tar.gz
-    dest: /home/ubuntu/backend
+    src: /root/project/backend.tar.gz
+    dest: /home/ubuntu/
 
 
 - name: make sure the latest npm is installed
