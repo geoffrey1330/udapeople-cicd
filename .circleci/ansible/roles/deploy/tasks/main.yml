@@ -29,23 +29,23 @@
 
 - name: "Unarchive backend files"
   unarchive:
-    src: /root/project/backend.tar.gz
-    dest: /home/ubuntu/
+    src: /root/project/artifact.tar.gz
+    dest: /home/ubuntu/backend
 
 
-# - name: make sure the latest npm is installed
-#   become: true
-#   command: npm install -g n
-#   args:
-#     chdir: /home/ubuntu/backend
+- name: make sure the latest npm is installed
+  become: true
+  command: npm install -g n
+  args:
+    chdir: /home/ubuntu/backend
 
-# - name: "install pm2"
-#   become: yes
-#   npm:
-#     name: pm2
-#     global: yes
-#     production: yes
-#     state: present
+- name: "install pm2"
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
 
 # - name: "install typescript"
 #   become: yes
@@ -63,15 +63,15 @@
 #     apt-get install -y nodejs  
 #     npm install -g n
 #     npm install
-# - name: "build package"
-#   become: true
-#   command: npm run build
-#   args:
-#     chdir: /home/ubuntu/backend
+- name: "build package"
+  become: true
+  command: npm run build
+  args:
+    chdir: /home/ubuntu/backend
 
-# - name: "Executing node"
-#   become: true
-#   command: pm2 start npm --name backend -- run start
-#   args:
-#     chdir: /home/ubuntu/backend
+- name: "Executing node"
+  become: true
+  command: pm2 start npm --name backend -- run start
+  args:
+    chdir: /home/ubuntu/backend
 
