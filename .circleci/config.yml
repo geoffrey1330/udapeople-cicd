@@ -3,19 +3,19 @@ orbs:
   aws-cli: circleci/aws-cli@1.3.0
 
 commands:
-  
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       Workflow_ID:
         type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}  
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            
+
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
             aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
@@ -25,21 +25,21 @@ commands:
     parameters:
       Workflow_ID:
         type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7} 
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure https://kvdb.io/FdEQLyzPWSP4VAfFxD48KY/migration_${CIRCLE_WORKFLOW_ID:0:7})
-           
-            if(( $SUCCESS==1 )); 
+
+            if(( $SUCCESS==1 ));
             then
               cd ~/project/backend
               npm install
               npm run migration:revert
             fi
-            
+
 jobs:
   build-frontend:
     docker:
@@ -54,7 +54,7 @@ jobs:
             cd frontend
             npm install
             npm run build
-            
+
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -89,7 +89,7 @@ jobs:
             cd frontend
             npm install
             npm test
-                
+
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -103,7 +103,7 @@ jobs:
             cd backend
             npm install
             npm test
-            
+
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -171,7 +171,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment      
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -179,14 +179,14 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: 
-            - "f8:46:28:e5:26:9c:e5:f8:fe:40:eb:a0:c5:73:ef:5d"           
+          fingerprints:
+            - "f8:46:28:e5:26:9c:e5:f8:fe:40:eb:a0:c5:73:ef:5d"
       - attach_workspace:
           at: ~/
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip 
+            apk add --update ansible tar gzip
             pip install awscli
             cat .circleci/ansible/inventory.txt
       - run:
@@ -195,7 +195,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
 
-      - destroy-environment     
+      - destroy-environment
 
   run-migrations:
     docker:
@@ -229,13 +229,13 @@ jobs:
       - run:
           name: Send migration results to kvdb
           command: |
-            
+
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/FdEQLyzPWSP4VAfFxD48KY/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - revert-migrations
-      - destroy-environment    
+      - destroy-environment
 
   deploy-frontend:
     docker:
@@ -287,8 +287,8 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
       - revert-migrations
-      - destroy-environment      
-                    
+      - destroy-environment
+
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
@@ -296,7 +296,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "f8:46:28:e5:26:9c:e5:f8:fe:40:eb:a0:c5:73:ef:5d" 
+            - "f8:46:28:e5:26:9c:e5:f8:fe:40:eb:a0:c5:73:ef:5d"
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -304,7 +304,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip nodejs npm curl 
+            apk add --update ansible tar gzip nodejs npm curl
             pip install awscli
       - run:
           name: create .env files
@@ -335,7 +335,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
           no_output_timeout: 30m
       - revert-migrations
-      - destroy-environment   
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -349,16 +349,21 @@ jobs:
           command: |
             pip3 install awscli
             apk add --update curl
+      # - run:
+      #     name: Get backend url
+      #     command: |
+      #       BACKEND_IP=$(aws ec2 describe-instances \
+      #         --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --output text)
       - run:
-          name: Get backend url
+          name: Backend smoke test.
           command: |
             BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-      - run:
-          name: Backend smoke test.
-          command: |
+
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
@@ -370,8 +375,8 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
-            echo ${URL} 
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
+            echo ${URL}
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
@@ -380,7 +385,7 @@ jobs:
               return 1
             fi
       - revert-migrations
-      - destroy-environment  
+      - destroy-environment
 
 #   cloudfront-update:
 #     docker:
@@ -395,7 +400,7 @@ jobs:
 #           name: Update cloudfront distribution
 #           command: |
 #             # your code here
-#       # Here's where you will add some code to rollback on failure  
+#       # Here's where you will add some code to rollback on failure
 
 # cleanup:
 #     docker:
@@ -415,7 +420,7 @@ jobs:
 #             then
 #               # your code here
 #             fi
-            
+
 
 workflows:
   default:
