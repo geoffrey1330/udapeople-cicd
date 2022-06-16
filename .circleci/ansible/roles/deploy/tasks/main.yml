@@ -69,6 +69,12 @@
   args:
     chdir: /home/ubuntu/backend
 
+
+- name: "Stop node"
+  become: true
+  command: pm2 stop default
+  args:
+    chdir: /home/ubuntu/backend
 - name: "Executing node"
   become: true
   command: pm2 start npm --name backend -- run start
