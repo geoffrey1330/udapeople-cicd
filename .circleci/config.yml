@@ -414,7 +414,6 @@ jobs:
 
       - destroy-environment
       - revert-migrations
-
   cleanup:
     docker:
       - image: amazon/aws-cli
