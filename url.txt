@@ -2,5 +2,4 @@ URL 01 - https://github.com/geoffrey1330/udapeople-cicd
 URL 02 - http://udapeople-80a2752.s3-website-us-east-1.amazonaws.com
 URL 03 - https://d3nwj4ylc05pqy.cloudfront.net
 URL 04 - http://44.203.190.78:3030/api/status
-
 URL 05 - http://ec2-54-157-50-1.compute-1.amazonaws.com:9090/targets
